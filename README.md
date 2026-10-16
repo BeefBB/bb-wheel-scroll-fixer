@@ -73,7 +73,7 @@ pyinstaller --noconfirm --onefile --noconsole --icon=mouse.ico --name="BB Wheel 
 
 # 致謝
 
-部分程式碼最初基於以下項目:  
+圖示及部分程式碼最初基於以下項目:  
 
 - [MeteAvci/WheelScrollFixer (MIT license)](https://github.com/MeteAvci/WheelScrollFixer)
 
