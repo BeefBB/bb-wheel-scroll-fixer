@@ -9,14 +9,12 @@ class AboutDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
-        self.setStyleSheet(QtWidgets.QApplication.instance().styleSheet())
         self.setWindowTitle(translator.tr("about_window_title"))
         self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "mouse.ico")))
         self.setFixedSize(340, 210)
 
         layout = QtWidgets.QVBoxLayout(self)
 
-        # app_name_label = QtWidgets.QLabel("<b>WheelScrollFixer</b>")
         app_name_label = QtWidgets.QLabel(translator.tr("about_qlabel"))
         app_name_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(app_name_label)
@@ -34,7 +32,6 @@ class AboutDialog(QtWidgets.QDialog):
         description_label.setWordWrap(True)
         layout.addWidget(description_label)
 
-        # Optimized: Use QLabel with OpenExternalLinks instead of full QTextBrowser
         website_label = QtWidgets.QLabel('<a href="https://github.com/BeefBB/bb-wheel-scroll-fixer" style="color: #F98E2C; text-decoration: none;">GitHub專案網址</a>')
         website_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         website_label.setOpenExternalLinks(True)

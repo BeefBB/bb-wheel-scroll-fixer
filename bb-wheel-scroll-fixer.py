@@ -1,7 +1,7 @@
 # wheel_scroll_fixer.py
 # Complete application with low-level mouse-wheel blocking, settings UI,
 # tray menu, watchdog, single-instance guard, and
-# an About dialog where en.MetheTech.com is a clickable link.
+# an About dialog with a clickable project link.
 import sys
 import winreg
 import os
@@ -263,8 +263,6 @@ class MouseHook:
         self.last_dir = None
         self.last_time = 0.0
         self._consecutive_opposite_events = 0
-        self.blocked_up = 0
-        self.blocked_down = 0
 
         # Thread-Safe Config Snapshot (Atomic Swap)
         self.config_snapshot = {}
@@ -387,10 +385,6 @@ class MouseHook:
                                 logging.debug("HOOK: PASS (Threshold Met)")
                             return self.user32.CallNextHookEx(self.hook_id, nCode, wParam, lParam)
                         else:
-                            if current_dir > 0:
-                                self.blocked_up += 1
-                            else:
-                                self.blocked_down += 1
                             if logging.getLogger().isEnabledFor(logging.DEBUG):
                                 logging.debug("HOOK: BLOCK")
                             return 1
@@ -591,7 +585,6 @@ if __name__ == "__main__":
             current_state = settings.get_enabled()
             settings.set_enabled(not current_state)
             hook.reload_settings(update_tray_icon)
-            update_tray_icon()
             status_text = translator.tr("tray_enabled") if not current_state else translator.tr("tray_disabled")
             tray.showMessage(
                 translator.tr("tray_msg_title"),
