@@ -62,29 +62,25 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.qt_settings = QtCore.QSettings("MetheTech", "WheelScrollFixer")
         if self.qt_settings.value("geometry"):
             self.restoreGeometry(self.qt_settings.value("geometry"))
-            self.resize(min(self.width(), 700), max(self.height(), 900))
+            self.resize(700, min(self.height(), 900))
         else:
             self.resize(700, 900)
+        self.setFixedWidth(700)
+        self.setMaximumHeight(900)
 
         self.setStyleSheet("""
-            QDialog { background-color: #1e1e1e; color: #ffffff; font-family: 'Microsoft JhengHei', sans-serif; font-size: 11pt; }
+            QDialog { background-color: #1e1e1e; color: #ffffff; font-family: 'Arial Rounded MT Bold', 'Microsoft JhengHei', sans-serif; font-size: 11pt; }
             QLabel { color: #e0e0e0; }
+            QToolTip { color: #ffffff; background-color: #333333; border: 1px solid #3d3d3d; }
             QGroupBox { border: 1px solid #3d3d3d; border-radius: 6px; margin-top: 24px; background-color: #252525; padding-top: 15px; }
-            QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 10px; color: #f28c00; font-weight: bold; }
+            QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 10px; color: #F98E2C; font-weight: bold; }
             
-            /* Buttons */
-            QPushButton { background-color: #3d3d3d; color: #ffffff; border: none; border-radius: 4px; padding: 8px 16px; font-weight: bold; font-size: 11pt; }
-            QPushButton:hover { background-color: #4d4d4d; }
-            QPushButton:pressed { background-color: #2d2d2d; }
-            QPushButton#primary { background-color: #f28c00; }
-            QPushButton#primary:hover { background-color: #e98200; }
             /* Inputs */
-            QSpinBox, QDoubleSpinBox { background-color: #333; border: 1px solid #444; border-radius: 4px; padding: 6px; color: #fff; font-size: 11pt; min-height: 20px; }
-            
+            QSpinBox, QDoubleSpinBox { background-color: #333333; border: 1px solid #3d3d3d; border-radius: 4px; padding: 6px; color: #ffffff; font-size: 11pt; min-height: 20px; }
             /* Checkbox */
-            QCheckBox { spacing: 8px; color: #eee; font-size: 11pt; }
-            QCheckBox::indicator { width: 20px; height: 20px; border: 1px solid #555; border-radius: 3px; background: #333; }
-            QCheckBox::indicator:checked { background-color: #f28c00; border-color: #f28c00; }
+            QCheckBox { spacing: 8px; color: #e0e0e0; font-size: 11pt; }
+            QCheckBox::indicator { width: 20px; height: 20px; border: 1px solid #3d3d3d; border-radius: 3px; background: #333333; }
+            QCheckBox::indicator:checked { background-color: #F98E2C; border-color: #F98E2C; }
         """)
 
         self.main_layout = QtWidgets.QVBoxLayout(self)
@@ -97,14 +93,14 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.content_layout.setSpacing(14)
         
         self.page_title = QtWidgets.QLabel("")
-        self.page_title.setStyleSheet("font-size: 18pt; font-weight: bold; color: #fff;")
+        self.page_title.setStyleSheet("font-size: 18pt; font-weight: bold; color: #ffffff;")
         self.content_layout.addWidget(self.page_title)
         
         # Divider
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         line.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
-        line.setStyleSheet("background-color: #333;")
+        line.setStyleSheet("background-color: #333333;")
         self.content_layout.addWidget(line)
 
         self.scroll_area = QtWidgets.QScrollArea()
@@ -151,6 +147,13 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         for button in self.findChildren(QtWidgets.QPushButton):
             button.setAutoDefault(False)
             button.setDefault(False)
+            button.setStyleSheet(
+                "QPushButton { background-color: #F98E2C; color: #ffffff; "
+                "border: none; border-radius: 4px; padding: 8px 16px; "
+                "font-weight: bold; font-size: 11pt; }"
+                "QPushButton:hover { background-color: #F98E2C; }"
+                "QPushButton:pressed { background-color: #F98E2C; }"
+            )
         
         # Initial Translation
         self.retranslate_ui()
@@ -164,6 +167,8 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         
         self.interval_spin = _WheelSafeDoubleSpinBox()
         self.interval_spin.setRange(0.05, 5.0)
+        self.interval_spin.setSingleStep(0.01)
+        self.interval_spin.setDecimals(2)
         self.interval_spin.setValue(self.settings.get_interval())
         self.interval_lbl = QtWidgets.QLabel("")
         
@@ -174,6 +179,8 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         
         self.reversal_spin = _WheelSafeDoubleSpinBox()
         self.reversal_spin.setRange(0.01, 0.20)
+        self.reversal_spin.setSingleStep(0.01)
+        self.reversal_spin.setDecimals(2)
         self.reversal_spin.setValue(self.settings.get_min_reversal_interval())
         self.reversal_lbl = QtWidgets.QLabel("")
         
@@ -195,9 +202,9 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.bl_list = QtWidgets.QListWidget()
         self.bl_list.setStyleSheet(
             "QListWidget { background-color: #333333; color: #ffffff; "
-            "border: 1px solid #555555; }"
+            "border: 1px solid #3d3d3d; }"
             "QListWidget::item { color: #ffffff; }"
-            "QListWidget::item:selected { background-color: #f28c00; color: #ffffff; }"
+            "QListWidget::item:selected { background-color: #F98E2C; color: #ffffff; }"
         )
         self.bl_list.addItems(self.settings.get_blacklist())
         self.bl_list.setFixedHeight(120)
@@ -209,12 +216,6 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.btn_bl_rem.clicked.connect(self.remove_selected_from_blacklist)
         self.btn_bl_clr = QtWidgets.QPushButton("")
         self.btn_bl_clr.clicked.connect(self.clear_blacklist)
-        for button in (self.btn_bl_add, self.btn_bl_rem, self.btn_bl_clr):
-            button.setStyleSheet(
-                "QPushButton { background-color: #f28c00; color: #ffffff; }"
-                "QPushButton:hover { background-color: #e98200; }"
-                "QPushButton:pressed { background-color: #cc6600; }"
-            )
         bl_btns.addWidget(self.btn_bl_add)
         bl_btns.addWidget(self.btn_bl_rem)
         bl_btns.addWidget(self.btn_bl_clr)

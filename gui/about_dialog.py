@@ -35,7 +35,7 @@ class AboutDialog(QtWidgets.QDialog):
         layout.addWidget(description_label)
 
         # Optimized: Use QLabel with OpenExternalLinks instead of full QTextBrowser
-        website_label = QtWidgets.QLabel('<a href="https://github.com/BeefBB/bb-wheel-scroll-fixer" style="color: #f28c00; text-decoration: none;">GitHub專案網址</a>')
+        website_label = QtWidgets.QLabel('<a href="https://github.com/BeefBB/bb-wheel-scroll-fixer" style="color: #F98E2C; text-decoration: none;">GitHub專案網址</a>')
         website_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         website_label.setOpenExternalLinks(True)
         website_label.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)

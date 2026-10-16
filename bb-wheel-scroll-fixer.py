@@ -519,22 +519,23 @@ if __name__ == "__main__":
         app_icon = QtGui.QIcon(icon_path)
         app.setWindowIcon(app_icon)
 
-        app.setFont(QtGui.QFont("Microsoft JhengHei", 11))
+        app.setFont(QtGui.QFont("Arial Rounded MT Bold", 11))
         logging.info('Font applied')
 
         app.setStyleSheet(r"""
-            QWidget { font-family: "Microsoft JhengHei", sans-serif; font-size: 11pt; }
-            QPushButton { background-color: #E98200; color: white; border: 1px solid #E98200; border-radius: 4px; padding: 6px 18px; min-width: 80px; }
-            QPushButton:hover { background-color: #DD7800; border-color: #DD7800; }
-            QPushButton:pressed { background-color: #CC6600; border-color: #CC6600; }
+            QWidget { background-color: #1e1e1e; color: #e0e0e0; font-family: "Arial Rounded MT Bold", "Microsoft JhengHei", sans-serif; font-size: 11pt; }
+            QPushButton { background-color: #F98E2C; color: #ffffff; border: none; border-radius: 4px; padding: 6px 18px; min-width: 80px; }
+            QPushButton:hover { background-color: #F98E2C; }
+            QPushButton:pressed { background-color: #F98E2C; }
+            QToolTip { color: #ffffff; background-color: #333333; border: 1px solid #3d3d3d; }
             QCheckBox::indicator { width: 16px; height: 16px; }
-            QGroupBox { font-weight: bold; margin-top: 20px; border: 1px solid #D0D0D0; border-radius: 6px; padding-top: 25px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px; }
-            QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 10px; margin-left: 2px; color: #333333; background-color: transparent; }
-            QSpinBox, QDoubleSpinBox { border: 1px solid #D0D0D0; border-radius: 4px; padding: 3px; background-color: #FFFFFF; selection-background-color: #E98200; selection-color: white; }
-            QListWidget { border: 1px solid #D0D0D0; border-radius: 4px; background-color: #FFFFFF; selection-background-color: #E98200; selection-color: white; padding: 2px; }
-            QMenu { background-color: #f0f0f0; border: 1px solid #ccc; }
+            QGroupBox { font-weight: bold; margin-top: 20px; border: 1px solid #3d3d3d; border-radius: 6px; padding-top: 25px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px; }
+            QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 10px; margin-left: 2px; color: #F98E2C; background-color: transparent; }
+            QSpinBox, QDoubleSpinBox { color: #ffffff; border: 1px solid #3d3d3d; border-radius: 4px; padding: 3px; background-color: #333333; selection-background-color: #F98E2C; selection-color: #ffffff; }
+            QListWidget { color: #ffffff; border: 1px solid #3d3d3d; border-radius: 4px; background-color: #333333; selection-background-color: #F98E2C; selection-color: #ffffff; padding: 2px; }
+            QMenu { color: #e0e0e0; background-color: #252525; border: 1px solid #3d3d3d; }
             QMenu::item { padding: 5px 20px 5px 10px; }
-            QMenu::item:selected { background-color: #E98200; color: white; }
+            QMenu::item:selected { background-color: #F98E2C; color: #ffffff; }
         """)
         logging.info('Stylesheet applied')
 
@@ -603,20 +604,20 @@ if __name__ == "__main__":
                 QMessageBox {
                     background-color: #1e1e1e;
                     color: #e0e0e0;
-                    font-family: 'Microsoft JhengHei', sans-serif;
+                    font-family: 'Arial Rounded MT Bold', 'Microsoft JhengHei', sans-serif;
                     font-size: 11pt;
                 }
                 QLabel { color: #e0e0e0; }
                 QPushButton {
-                    background-color: #3d3d3d;
+                    background-color: #F98E2C;
                     color: #ffffff;
                     border: none;
                     border-radius: 4px;
                     padding: 6px 18px;
                     min-width: 80px;
                 }
-                QPushButton:hover { background-color: #4d4d4d; }
-                QPushButton:pressed { background-color: #2d2d2d; }
+                QPushButton:hover { background-color: #F98E2C; }
+                QPushButton:pressed { background-color: #F98E2C; }
             """)
             message_box.exec()
         act_toggle_enabled.triggered.connect(toggle_enabled_from_tray)
