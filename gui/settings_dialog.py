@@ -7,12 +7,11 @@ from utils import get_foreground_process_name
 class ModernSettingsDialog(QtWidgets.QDialog):
     """The main settings dialog for the application, redesigned."""
 
-    def __init__(self, app_context, configure_startup):
+    def __init__(self, settings, hook, update_tray_icon_callback, configure_startup):
         super().__init__()
-        self.settings = app_context.settings
-        self.hook = app_context.hook
-        self.update_tray_icon_callback = app_context.update_tray_icon_callback
-
+        self.settings = settings
+        self.hook = hook
+        self.update_tray_icon_callback = update_tray_icon_callback
         self.configure_startup = configure_startup
         
         self._init_ui()

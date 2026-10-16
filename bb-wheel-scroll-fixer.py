@@ -19,7 +19,6 @@ import psutil
 import win32gui
 import win32con
 from PyQt5 import QtWidgets, QtGui
-from app_context import AppContext
 from gui import SettingsDialog, HelpDialog, AboutDialog
 from utils import get_foreground_process_name
 from localization import translator
@@ -582,8 +581,7 @@ if __name__ == "__main__":
         tray.show()
         logging.info('Tray icon shown')
 
-        app_context = AppContext(settings, hook, update_tray_icon)
-        dlg = SettingsDialog(app_context, configure_startup)
+        dlg = SettingsDialog(settings, hook, update_tray_icon, configure_startup)
         act_settings.triggered.connect(dlg.show)
         logging.info('Settings dialog created')
 
