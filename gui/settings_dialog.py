@@ -301,6 +301,17 @@ class ModernSettingsDialog(QtWidgets.QDialog):
 
     # --- Logic Methods ---
     def save(self, configure_startup):
+        if (
+            self.threshold_spin.value() > 1
+            and self.interval_spin.value() <= self.reversal_spin.value()
+        ):
+            QtWidgets.QMessageBox.warning(
+                self,
+                translator.tr("msg_threshold_unreachable_title"),
+                translator.tr("msg_threshold_unreachable_text"),
+            )
+            return
+
         self.settings.set_interval(self.interval_spin.value())
         bl = [self.bl_list.item(i).text() for i in range(self.bl_list.count())]
         self.settings.set_blacklist(bl)
@@ -330,7 +341,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         )
         reply = message_box.exec()
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
-            self.interval_spin.setValue(0.05)
+            self.interval_spin.setValue(0.20)
             self.threshold_spin.setValue(1)
             self.reversal_spin.setValue(0.05)
             self.enabled_cb.setChecked(True)

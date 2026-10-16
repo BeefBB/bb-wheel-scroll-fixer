@@ -175,7 +175,7 @@ class Settings(JsonSettings):
             self.sync()
 
     def get_interval(self) -> float:
-        return self.value("block_interval", 0.05, type=float)
+        return self.value("block_interval", 0.20, type=float)
 
     def set_interval(self, v: float):
         self.set_value("block_interval", v)
@@ -285,6 +285,13 @@ class MouseHook:
         self.config_snapshot = new_config
         
         self._consecutive_opposite_events = 0
+        logging.info(
+            "Hook settings applied: enabled=%s, interval=%.2fs, threshold=%d, min_reversal=%.2fs",
+            new_config['enabled'],
+            new_config['interval'],
+            new_config['threshold'],
+            new_config['min_reversal'],
+        )
         
         if update_tray_icon_callback:
             update_tray_icon_callback()
