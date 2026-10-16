@@ -39,6 +39,13 @@ MeteAvci/WheelScrollFixer 的BB修改版本
 
 - [BB Wheel Scroll Fixer.exe](https://github.com/BeefBB/bb-wheel-scroll-fixer/releases)
 
+然後放到一個你不會移動的地方, 再執行它  
+
+## 備註
+
+如果開機啟動失效了, 那通常是因為你移動了這個程式,  
+請重新執行一次並再次選擇 開機自動執行  
+
 # 想自己編譯?
 
 ## 執行

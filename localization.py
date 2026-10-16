@@ -7,7 +7,7 @@ TRANSLATIONS = {
         "grp_blocking": "阻擋邏輯",
         "grp_app_control": "應用程式控制",
         "grp_system": "系統",
-        "chk_start_boot": "開機時啟動",
+        "chk_start_boot": "開機自動執行",
         "tip_start_boot": "勾選後, Windows 啟動時會自動啟動本程式",
         "chk_enable": "啟用捲動阻擋",
         "tip_enable": "控制是否啟用捲動阻擋功能的總開關",
@@ -54,7 +54,7 @@ TRANSLATIONS = {
         <h2>系統</h2>
         <ul>
           <li><b>啟用捲動阻擋: </b>控制是否套用阻擋邏輯. 也可以從系統匣選單立即切換.</li>
-          <li><b>開機時啟動: </b>登入 Windows 時自動啟動本程式; 啟用此選項時也會啟動監看程序, 在主程式意外結束時嘗試重新啟動.</li>
+          <li><b>開機自動執行: </b>登入 Windows 時自動啟動本程式; 啟用此選項時也會啟動監看程序, 在主程式意外結束時嘗試重新啟動.</li>
         </ul>
         <h2>儲存與系統匣</h2>
         <ul>
