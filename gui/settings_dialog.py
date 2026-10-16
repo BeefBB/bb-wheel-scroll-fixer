@@ -159,12 +159,20 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         for button in self.findChildren(QtWidgets.QPushButton):
             button.setAutoDefault(False)
             button.setDefault(False)
+            is_secondary = button in (
+                self.defaults_btn,
+                self.help_btn,
+                self.about_btn,
+            )
+            background_color = "#666666" if is_secondary else "#F98E2C"
+            hover_color = "#777777" if is_secondary else "#F98E2C"
+            pressed_color = "#555555" if is_secondary else "#F98E2C"
             button.setStyleSheet(
-                "QPushButton { background-color: #F98E2C; color: #ffffff; "
+                f"QPushButton {{ background-color: {background_color}; color: #ffffff; "
                 "border: none; border-radius: 4px; padding: 8px 16px; "
                 "font-weight: bold; font-size: 11pt; }"
-                "QPushButton:hover { background-color: #F98E2C; }"
-                "QPushButton:pressed { background-color: #F98E2C; }"
+                f"QPushButton:hover {{ background-color: {hover_color}; }}"
+                f"QPushButton:pressed {{ background-color: {pressed_color}; }}"
             )
         
         # Initial Translation
