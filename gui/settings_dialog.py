@@ -1,8 +1,44 @@
 """Settings dialog for the WheelScrollFixer application."""
+import math
 import os
 from PyQt5 import QtWidgets, QtGui, QtCore
 from localization import translator
 from utils import get_foreground_process_name
+
+
+class _WheelSafeSpinBoxMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setKeyboardTracking(False)
+
+    def wheelEvent(self, event):
+        event.ignore()
+
+    def validate(self, text, position):
+        state, text, position = super().validate(text, position)
+        value, valid = self.locale().toDouble(text)
+        if valid and math.isfinite(value) and (
+            isinstance(self, QtWidgets.QDoubleSpinBox) or value.is_integer()
+        ):
+            return QtGui.QValidator.Acceptable, text, position
+        return state, text, position
+
+    def valueFromText(self, text):
+        value, valid = self.locale().toDouble(text)
+        if not valid or not math.isfinite(value):
+            return self.value()
+        if isinstance(self, QtWidgets.QSpinBox):
+            value = int(value)
+        return max(self.minimum(), min(self.maximum(), value))
+
+
+class _WheelSafeSpinBox(_WheelSafeSpinBoxMixin, QtWidgets.QSpinBox):
+    pass
+
+
+class _WheelSafeDoubleSpinBox(_WheelSafeSpinBoxMixin, QtWidgets.QDoubleSpinBox):
+    pass
+
 
 class ModernSettingsDialog(QtWidgets.QDialog):
     """The main settings dialog for the application, redesigned."""
@@ -111,6 +147,10 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         
         self.content_layout.addLayout(self.footer_layout)
         self.main_layout.addWidget(self.content_area)
+
+        for button in self.findChildren(QtWidgets.QPushButton):
+            button.setAutoDefault(False)
+            button.setDefault(False)
         
         # Initial Translation
         self.retranslate_ui()
@@ -122,17 +162,17 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         form_logic.setSpacing(15)
         form_logic.setContentsMargins(15, 25, 15, 15)
         
-        self.interval_spin = QtWidgets.QDoubleSpinBox()
+        self.interval_spin = _WheelSafeDoubleSpinBox()
         self.interval_spin.setRange(0.05, 5.0)
         self.interval_spin.setValue(self.settings.get_interval())
         self.interval_lbl = QtWidgets.QLabel("")
         
-        self.threshold_spin = QtWidgets.QSpinBox()
+        self.threshold_spin = _WheelSafeSpinBox()
         self.threshold_spin.setRange(1, 10)
         self.threshold_spin.setValue(self.settings.get_direction_change_threshold())
         self.threshold_lbl = QtWidgets.QLabel("")
         
-        self.reversal_spin = QtWidgets.QDoubleSpinBox()
+        self.reversal_spin = _WheelSafeDoubleSpinBox()
         self.reversal_spin.setRange(0.01, 0.20)
         self.reversal_spin.setValue(self.settings.get_min_reversal_interval())
         self.reversal_lbl = QtWidgets.QLabel("")
