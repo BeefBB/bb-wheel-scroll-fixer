@@ -19,7 +19,7 @@ import psutil
 import win32gui
 import win32con
 from PySide6 import QtWidgets, QtGui
-from gui import SettingsDialog, HelpDialog, AboutDialog
+from gui import SettingsDialog
 from utils import get_foreground_process_name
 from localization import translator
 
@@ -573,8 +573,6 @@ if __name__ == "__main__":
         menu = QtWidgets.QMenu()
         act_settings = menu.addAction(translator.tr("tray_settings"))
         act_toggle_enabled = menu.addAction(translator.tr("tray_toggle"))
-        act_help = menu.addAction(translator.tr("tray_help"))
-        act_about = menu.addAction(translator.tr("tray_about"))
         menu.addSeparator()
         act_exit = menu.addAction(translator.tr("tray_exit"))
         tray.setContextMenu(menu)
@@ -622,10 +620,6 @@ if __name__ == "__main__":
             message_box.exec()
         act_toggle_enabled.triggered.connect(toggle_enabled_from_tray)
 
-        def show_help_dialog():
-            HelpDialog(dlg).exec()
-        def show_about_dialog():
-            AboutDialog(dlg).exec()
         def exit_app():
             if watchdog_process:
                 try:
@@ -642,8 +636,6 @@ if __name__ == "__main__":
             hook.stop()
             app.quit()
 
-        act_help.triggered.connect(show_help_dialog)
-        act_about.triggered.connect(show_about_dialog)
         act_exit.triggered.connect(exit_app)
 
         dlg.show()

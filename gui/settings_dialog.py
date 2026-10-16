@@ -4,6 +4,8 @@ import os
 from PySide6 import QtWidgets, QtGui, QtCore
 from localization import translator
 from utils import get_foreground_process_name
+from .help_dialog import HelpDialog
+from .about_dialog import AboutDialog
 
 
 class _WheelSafeSpinBoxMixin:
@@ -125,6 +127,14 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.defaults_btn = QtWidgets.QPushButton("")
         self.defaults_btn.clicked.connect(self.restore_defaults)
         self.defaults_btn.setMinimumHeight(40)
+
+        self.help_btn = QtWidgets.QPushButton("")
+        self.help_btn.clicked.connect(lambda: HelpDialog(self).exec())
+        self.help_btn.setMinimumHeight(40)
+
+        self.about_btn = QtWidgets.QPushButton("")
+        self.about_btn.clicked.connect(lambda: AboutDialog(self).exec())
+        self.about_btn.setMinimumHeight(40)
         
         self.save_btn = QtWidgets.QPushButton("")
         self.save_btn.setObjectName("primary")
@@ -136,6 +146,8 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.status_label.setStyleSheet("color: #4caf50; font-weight: bold;")
 
         self.footer_layout.addWidget(self.defaults_btn)
+        self.footer_layout.addWidget(self.help_btn)
+        self.footer_layout.addWidget(self.about_btn)
         self.footer_layout.addStretch()
         self.footer_layout.addWidget(self.status_label)
         self.footer_layout.addSpacing(15)
@@ -275,6 +287,8 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         
         # Footer
         self.defaults_btn.setText(tr("btn_defaults"))
+        self.help_btn.setText(tr("btn_help"))
+        self.about_btn.setText(tr("btn_about"))
         self.save_btn.setText(tr("btn_save"))
 
     # --- Logic Methods ---
