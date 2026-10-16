@@ -1,6 +1,6 @@
 # BB 捲動彈跳過濾
 
-一款輕巧實用的 Windows 工具, 可減少滑鼠滾輪意外捲動與抖動問題
+一款輕巧實用的 Windows 工具, 減少滑鼠滾輪意外捲動抖動問題
 
 MeteAvci/WheelScrollFixer 的BB修改版本  
 基本上就是移除了BB用不到的功能+中文化  
@@ -14,7 +14,6 @@ MeteAvci/WheelScrollFixer 的BB修改版本
 - 滑鼠滾輪方向反轉過濾
 - 可調整阻擋間隔, 方向切換門檻, 最短反轉時間
 - 應用程式黑名單
-- 從系統匣啟用或停用阻擋功能, 開啟設定或結束程式; 說明與關於視窗可從設定開啟
 - 開機啟動及監看程序, 程式意外結束時可由監看程序重新啟動
 - JSON 設定儲存, 還原預設值, 單一執行個體限制
 
@@ -74,7 +73,7 @@ pyinstaller --noconfirm --onefile --noconsole --icon=bb-wheel-scroll-fixer.ico -
 
 # 致謝
 
-圖示及部分程式碼最初基於以下項目:  
+部分程式碼最初基於以下項目:  
 
 - [MeteAvci/WheelScrollFixer (MIT license)](https://github.com/MeteAvci/WheelScrollFixer)
 
