@@ -565,20 +565,23 @@ if __name__ == "__main__":
         logging.info('Tray icon loaded')
         tray = QtWidgets.QSystemTrayIcon(tray_icon, parent=app)
 
-        def update_tray_icon():
-            tray.setIcon(tray_icon)
-        update_tray_icon()
-        logging.info('Tray icon updated')
-
         menu = QtWidgets.QMenu()
-        act_settings = menu.addAction(translator.tr("tray_settings"))
         act_toggle_enabled = menu.addAction(translator.tr("tray_toggle"))
+        act_toggle_enabled.setCheckable(True)
+        act_toggle_enabled.setChecked(settings.get_enabled())
+        act_settings = menu.addAction(translator.tr("tray_settings"))
         menu.addSeparator()
         act_exit = menu.addAction(translator.tr("tray_exit"))
         tray.setContextMenu(menu)
         tray.setToolTip("WheelScrollFixer")
         tray.show()
         logging.info('Tray icon shown')
+
+        def update_tray_icon():
+            tray.setIcon(tray_icon)
+            act_toggle_enabled.setChecked(settings.get_enabled())
+        update_tray_icon()
+        logging.info('Tray icon updated')
 
         dlg = SettingsDialog(settings, hook, update_tray_icon, configure_startup)
         act_settings.triggered.connect(dlg.show)
@@ -589,35 +592,13 @@ if __name__ == "__main__":
             settings.set_enabled(not current_state)
             hook.reload_settings(update_tray_icon)
             update_tray_icon()
-            
             status_text = translator.tr("tray_enabled") if not current_state else translator.tr("tray_disabled")
-            message_box = QtWidgets.QMessageBox(
-                QtWidgets.QMessageBox.Icon.Information,
+            tray.showMessage(
                 translator.tr("tray_msg_title"),
-                f"{translator.tr('tray_msg_title')}: {status_text}",
-                QtWidgets.QMessageBox.StandardButton.Ok,
-                dlg,
+                status_text,
+                QtWidgets.QSystemTrayIcon.MessageIcon.Information,
+                1000,
             )
-            message_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #1e1e1e;
-                    color: #e0e0e0;
-                    font-family: 'Arial Rounded MT Bold', 'Microsoft JhengHei', sans-serif;
-                    font-size: 11pt;
-                }
-                QLabel { color: #e0e0e0; }
-                QPushButton {
-                    background-color: #F98E2C;
-                    color: #ffffff;
-                    border: none;
-                    border-radius: 4px;
-                    padding: 6px 18px;
-                    min-width: 80px;
-                }
-                QPushButton:hover { background-color: #F98E2C; }
-                QPushButton:pressed { background-color: #F98E2C; }
-            """)
-            message_box.exec()
         act_toggle_enabled.triggered.connect(toggle_enabled_from_tray)
 
         def exit_app():
