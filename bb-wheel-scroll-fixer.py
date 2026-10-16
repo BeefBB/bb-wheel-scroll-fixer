@@ -18,7 +18,7 @@ from ctypes import wintypes
 import psutil
 import win32gui
 import win32con
-from PyQt5 import QtWidgets, QtGui
+from PySide6 import QtWidgets, QtGui
 from gui import SettingsDialog, HelpDialog, AboutDialog
 from utils import get_foreground_process_name
 from localization import translator
@@ -593,10 +593,10 @@ if __name__ == "__main__":
             
             status_text = translator.tr("tray_enabled") if not current_state else translator.tr("tray_disabled")
             message_box = QtWidgets.QMessageBox(
-                QtWidgets.QMessageBox.Information,
+                QtWidgets.QMessageBox.Icon.Information,
                 translator.tr("tray_msg_title"),
                 f"{translator.tr('tray_msg_title')}: {status_text}",
-                QtWidgets.QMessageBox.Ok,
+                QtWidgets.QMessageBox.StandardButton.Ok,
                 dlg,
             )
             message_box.setStyleSheet("""
@@ -618,13 +618,13 @@ if __name__ == "__main__":
                 QPushButton:hover { background-color: #4d4d4d; }
                 QPushButton:pressed { background-color: #2d2d2d; }
             """)
-            message_box.exec_()
+            message_box.exec()
         act_toggle_enabled.triggered.connect(toggle_enabled_from_tray)
 
         def show_help_dialog():
-            HelpDialog(dlg).exec_()
+            HelpDialog(dlg).exec()
         def show_about_dialog():
-            AboutDialog(dlg).exec_()
+            AboutDialog(dlg).exec()
         def exit_app():
             if watchdog_process:
                 try:
@@ -649,7 +649,7 @@ if __name__ == "__main__":
         logging.info('Settings dialog shown')
 
         def restore_window(reason):
-            if reason == QtWidgets.QSystemTrayIcon.Trigger:
+            if reason == QtWidgets.QSystemTrayIcon.ActivationReason.Trigger:
                 dlg.showNormal()
                 dlg.activateWindow()
         tray.activated.connect(restore_window)
@@ -660,4 +660,4 @@ if __name__ == "__main__":
         app.aboutToQuit.connect(on_about_to_quit)
 
         logging.info('Starting event loop')
-        sys.exit(app.exec_())
+        sys.exit(app.exec())

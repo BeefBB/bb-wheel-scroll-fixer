@@ -1,7 +1,7 @@
 """Settings dialog for the WheelScrollFixer application."""
 import math
 import os
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PySide6 import QtWidgets, QtGui, QtCore
 from localization import translator
 from utils import get_foreground_process_name
 
@@ -20,7 +20,7 @@ class _WheelSafeSpinBoxMixin:
         if valid and math.isfinite(value) and (
             isinstance(self, QtWidgets.QDoubleSpinBox) or value.is_integer()
         ):
-            return QtGui.QValidator.Acceptable, text, position
+            return QtGui.QValidator.State.Acceptable, text, position
         return state, text, position
 
     def valueFromText(self, text):
@@ -54,7 +54,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
 
     def _init_ui(self):
         """Initializes the user interface."""
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setWindowTitle('Scroll Lock Settings')
         self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "mouse.ico")))
         
@@ -102,15 +102,15 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         
         # Divider
         line = QtWidgets.QFrame()
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         line.setStyleSheet("background-color: #333;")
         self.content_layout.addWidget(line)
 
         self.scroll_area = QtWidgets.QScrollArea()
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.scroll_area.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
+        self.scroll_area.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.scroll_area.setStyleSheet("QScrollArea { background-color: #1e1e1e; }")
         self.scroll_area.viewport().setStyleSheet("background-color: #1e1e1e;")
         self.settings_content = QtWidgets.QWidget()
@@ -182,7 +182,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         form_logic.addRow(self.reversal_lbl, self.reversal_spin)
         grp_logic.setLayout(form_logic)
         
-        self.settings_layout.addWidget(grp_logic, alignment=QtCore.Qt.AlignTop)
+        self.settings_layout.addWidget(grp_logic, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
         # Application Control Group
         grp_app = QtWidgets.QGroupBox("")
@@ -224,7 +224,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         layout_grp_app.addLayout(bl_btns)
         
         grp_app.setLayout(layout_grp_app)
-        self.settings_layout.addWidget(grp_app, alignment=QtCore.Qt.AlignTop)
+        self.settings_layout.addWidget(grp_app, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
         grp_sys = QtWidgets.QGroupBox("")
         self.grp_sys = grp_sys
@@ -242,7 +242,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         form_gen.addWidget(self.start_cb)
         grp_sys.setLayout(form_gen)
         
-        self.settings_layout.addWidget(grp_sys, alignment=QtCore.Qt.AlignTop)
+        self.settings_layout.addWidget(grp_sys, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
     def retranslate_ui(self):
         tr = translator.tr
@@ -292,8 +292,13 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(3000, lambda: self.status_label.setText(""))
 
     def restore_defaults(self):
-        reply = QtWidgets.QMessageBox.question(self, translator.tr("msg_reset_title"), translator.tr("msg_reset_text"), QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+        reply = QtWidgets.QMessageBox.question(
+            self,
+            translator.tr("msg_reset_title"),
+            translator.tr("msg_reset_text"),
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+        )
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             self.interval_spin.setValue(0.05)
             self.threshold_spin.setValue(1)
             self.reversal_spin.setValue(0.05)

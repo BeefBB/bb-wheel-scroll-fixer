@@ -1,6 +1,6 @@
 # gui/help_dialog.py
 """The help dialog for the application."""
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PySide6 import QtWidgets, QtGui, QtCore
 import os
 from localization import translator
 
@@ -8,7 +8,7 @@ class HelpDialog(QtWidgets.QDialog):
     """The help dialog."""
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setStyleSheet("""
             QDialog {
                 background-color: #1e1e1e;
