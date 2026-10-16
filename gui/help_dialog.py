@@ -33,7 +33,7 @@ class HelpDialog(QtWidgets.QDialog):
             QPushButton:pressed { background-color: #F98E2C; }
         """)
         self.setWindowTitle(translator.tr("help_window_title"))
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "mouse.ico")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "bb-wheel-scroll-fixer.ico")))
         self.setFixedWidth(600)
         self.setMinimumHeight(460)
         self.setMaximumHeight(900)

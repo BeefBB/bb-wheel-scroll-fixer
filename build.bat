@@ -26,7 +26,7 @@ if errorlevel 1 (
 echo.
 echo [2/3] Building with PyInstaller...
 
-.venv\Scripts\pyinstaller.exe --noconfirm --onefile --noconsole --icon=mouse.ico --name="BB Wheel Scroll Fixer" --add-data "mouse.ico;."  "bb-wheel-scroll-fixer.py"
+.venv\Scripts\pyinstaller.exe --noconfirm --onefile --noconsole --icon=bb-wheel-scroll-fixer.ico --name="BB Wheel Scroll Fixer" --add-data "bb-wheel-scroll-fixer.ico;."  "bb-wheel-scroll-fixer.py"
 
 if errorlevel 1 (
     echo PyInstaller failed.

@@ -58,7 +58,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         """Initializes the user interface."""
         self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setWindowTitle('Scroll Lock Settings')
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "mouse.ico")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "bb-wheel-scroll-fixer.ico")))
         
         # Load geometry or set default
         self.qt_settings = QtCore.QSettings("MetheTech", "WheelScrollFixer")

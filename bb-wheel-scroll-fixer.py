@@ -509,7 +509,7 @@ if __name__ == "__main__":
             base_path = sys._MEIPASS
         else:
             base_path = os.path.dirname(__file__)
-        icon_path = os.path.join(base_path, "mouse.ico")
+        icon_path = os.path.join(base_path, "bb-wheel-scroll-fixer.ico")
         app_icon = QtGui.QIcon(icon_path)
         app.setWindowIcon(app_icon)
 

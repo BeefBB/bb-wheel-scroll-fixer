@@ -10,7 +10,7 @@ class AboutDialog(QtWidgets.QDialog):
         super().__init__(parent)
         self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setWindowTitle(translator.tr("about_window_title"))
-        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "mouse.ico")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "bb-wheel-scroll-fixer.ico")))
         self.setFixedSize(340, 210)
 
         layout = QtWidgets.QVBoxLayout(self)

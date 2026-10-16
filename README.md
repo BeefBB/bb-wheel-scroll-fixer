@@ -58,7 +58,7 @@ pip install -r requirements.txt
 ```
 
 ```bash
-pyinstaller --noconfirm --onefile --noconsole --icon=mouse.ico --name="BB Wheel Scroll Fixer" --add-data "mouse.ico;."  "bb-wheel-scroll-fixer.py"
+pyinstaller --noconfirm --onefile --noconsole --icon=bb-wheel-scroll-fixer.ico --name="BB Wheel Scroll Fixer" --add-data "bb-wheel-scroll-fixer.ico;."  "bb-wheel-scroll-fixer.py"
 ```
 
 打包後會在 `./dist`  
