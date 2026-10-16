@@ -38,6 +38,6 @@ class AboutDialog(QtWidgets.QDialog):
         website_label.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         layout.addWidget(website_label)
 
-        ok_button = QtWidgets.QPushButton('OK')
+        ok_button = QtWidgets.QPushButton(translator.tr("btn_close"))
         ok_button.clicked.connect(self.accept)
         layout.addWidget(ok_button)

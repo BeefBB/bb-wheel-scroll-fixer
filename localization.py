@@ -29,6 +29,8 @@ TRANSLATIONS = {
         "status_restored": "已成功還原為預設值",
         "msg_reset_title": "確認重設",
         "msg_reset_text": "確定要還原預設設定嗎？",
+        "msg_reset_yes": "是",
+        "msg_reset_cancel": "取消",
         "tray_settings": "設定",
         "tray_toggle": "啟用",
         "tray_exit": "結束",

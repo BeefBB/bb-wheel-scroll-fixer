@@ -315,12 +315,20 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(3000, lambda: self.status_label.setText(""))
 
     def restore_defaults(self):
-        reply = QtWidgets.QMessageBox.question(
-            self,
-            translator.tr("msg_reset_title"),
-            translator.tr("msg_reset_text"),
-            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+        message_box = QtWidgets.QMessageBox(self)
+        message_box.setIcon(QtWidgets.QMessageBox.Icon.Question)
+        message_box.setWindowTitle(translator.tr("msg_reset_title"))
+        message_box.setText(translator.tr("msg_reset_text"))
+        message_box.setStandardButtons(
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No
         )
+        message_box.button(QtWidgets.QMessageBox.StandardButton.Yes).setText(
+            translator.tr("msg_reset_yes")
+        )
+        message_box.button(QtWidgets.QMessageBox.StandardButton.No).setText(
+            translator.tr("msg_reset_cancel")
+        )
+        reply = message_box.exec()
         if reply == QtWidgets.QMessageBox.StandardButton.Yes:
             self.interval_spin.setValue(0.05)
             self.threshold_spin.setValue(1)
