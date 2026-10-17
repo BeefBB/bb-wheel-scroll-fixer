@@ -80,7 +80,7 @@ TRANSLATIONS = {
         "btn_close": "關閉",
         "about_qlabel": "<b>BB 捲動彈跳過濾</b>",
         "about_window_title": "關於 BB 捲動彈跳過濾 - 關於",
-        "about_version": "版本: 1.2.1",
+        "about_version": "版本: 1.3.0",
         "about_author": "作者: BeefBB",
         "about_description": "MeteAvci/WheelScrollFixer 的BB修改版本",
     }
