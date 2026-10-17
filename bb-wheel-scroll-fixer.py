@@ -213,33 +213,108 @@ class Settings(JsonSettings):
 # ===========================
 # Windows Startup Management
 # ===========================
+STARTUP_TASK_NAME = "BBWheelScrollFixer"
+LEGACY_STARTUP_VALUE = "ScrollLockApp"
+
+
+def application_command(*args):
+    if getattr(sys, 'frozen', False):
+        return [sys.executable, *args]
+    return [sys.executable, os.path.abspath(__file__), *args]
+
+
+def remove_legacy_startup():
+    """Remove the old Run entry; return whether it existed, or None on failure."""
+    try:
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            0,
+            winreg.KEY_WRITE,
+        ) as key:
+            try:
+                winreg.DeleteValue(key, LEGACY_STARTUP_VALUE)
+                return True
+            except FileNotFoundError:
+                return False
+    except OSError as e:
+        logging.error("Failed to remove legacy startup entry: %s", e)
+        return None
+
+
+def startup_task_exists():
+    try:
+        result = subprocess.run(
+            ["schtasks", "/Query", "/TN", STARTUP_TASK_NAME],
+            capture_output=True,
+            text=True,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+        return result.returncode == 0
+    except OSError as e:
+        logging.error("Failed to query startup task: %s", e)
+        return False
+
+
 def configure_startup(enable: bool):
     """
-    Create or remove HKCU Run entry for this script.
-    Returns True if successful, False if failed (e.g. permission denied).
+    Create or remove a highest-privilege logon task.
+    Returns True if successful, False if failed.
     """
-    run_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-    name = "ScrollLockApp"
-    
-    if getattr(sys, 'frozen', False):
-        # If frozen (exe), point to the executable itself
-        path = f'"{os.path.abspath(sys.executable)}"'
-    else:
-        # If script, point to python interpreter + script
-        path = f'"{os.path.abspath(sys.executable)}" "{os.path.abspath(__file__)}"'
-
     try:
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, run_key, 0, winreg.KEY_WRITE) as key:
-            if enable:
-                winreg.SetValueEx(key, name, 0, winreg.REG_SZ, path)
-            else:
-                try:
-                    winreg.DeleteValue(key, name)
-                except FileNotFoundError:
-                    pass
+        if enable:
+            task_command = subprocess.list2cmdline(
+                application_command("--startup")
+            )
+            subprocess.run(
+                [
+                    "schtasks",
+                    "/Create",
+                    "/TN", STARTUP_TASK_NAME,
+                    "/TR", task_command,
+                    "/SC", "ONLOGON",
+                    "/RL", "HIGHEST",
+                    "/IT",
+                    "/F",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            if remove_legacy_startup() is None:
+                logging.error("The legacy startup entry remains after creating the startup task.")
+        else:
+            subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-Command",
+                    (
+                        "$ErrorActionPreference = 'Stop'; "
+                        f"$task = Get-ScheduledTask -TaskName '{STARTUP_TASK_NAME}' "
+                        "-ErrorAction SilentlyContinue; "
+                        "if ($null -ne $task) { "
+                        f"Unregister-ScheduledTask -TaskName '{STARTUP_TASK_NAME}' "
+                        "-Confirm:$false -ErrorAction Stop }"
+                    ),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            if remove_legacy_startup() is None:
+                return False
         return True
-    except OSError as e:
-        logging.error(f"Failed to configure startup (Permission/AV block?): {e}")
+    except (OSError, subprocess.CalledProcessError) as e:
+        details = (
+            e.stderr.strip()
+            if isinstance(e, subprocess.CalledProcessError) and e.stderr
+            else str(e)
+        )
+        logging.error("Failed to configure startup task: %s", details)
         return False
 
 # =======================
@@ -448,7 +523,7 @@ def run_watchdog(parent_pid_str):
         if not psutil.pid_exists(parent_pid):
             logging.warning(f"Parent PID {parent_pid} not found. Relaunching application.")
             subprocess.Popen(
-                [sys.executable, os.path.abspath(__file__), "--no-watchdog"],
+                application_command("--no-watchdog", "--startup"),
                 creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
             )
             break
@@ -483,6 +558,9 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Failed to elevate: {e}")
             # Fallback to normal execution
+
+    admin_process = is_admin()
+    legacy_startup_entry_removed = remove_legacy_startup() if admin_process else False
     
     if len(sys.argv) > 2 and sys.argv[1] == "--watchdog":
         run_watchdog(sys.argv[2])
@@ -498,6 +576,8 @@ if __name__ == "__main__":
             ]
         )
         logging.info(f"Logging initialized. Log file: {log_file}")
+        if legacy_startup_entry_removed is None:
+            logging.error("The legacy startup entry could not be removed.")
         
         app_name = "WheelScrollFixer"
         window_title = translator.tr("window_title")
@@ -511,6 +591,15 @@ if __name__ == "__main__":
         
         settings = Settings()
         logging.info('Settings loaded')
+        if settings.get_startup() and not startup_task_exists():
+            if configure_startup(True):
+                logging.info("Migrated legacy startup entry to a scheduled task.")
+            else:
+                logging.error("Failed to create the enabled startup task.")
+        actual_startup_enabled = startup_task_exists()
+        if settings.get_startup() != actual_startup_enabled:
+            settings.set_startup(actual_startup_enabled)
+            settings.sync()
 
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
@@ -544,7 +633,7 @@ if __name__ == "__main__":
         if settings.get_startup() and "--no-watchdog" not in sys.argv:
             try:
                 watchdog_process = subprocess.Popen(
-                    [sys.executable, os.path.abspath(__file__), "--watchdog", str(os.getpid())],
+                    application_command("--watchdog", str(os.getpid())),
                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
                 )
                 logging.info('Watchdog process spawned')
@@ -584,7 +673,13 @@ if __name__ == "__main__":
         update_tray_icon()
         logging.info('Tray icon updated')
 
-        dlg = SettingsDialog(settings, hook, update_tray_icon, configure_startup)
+        dlg = SettingsDialog(
+            settings,
+            hook,
+            update_tray_icon,
+            configure_startup,
+            startup_task_exists,
+        )
         act_settings.triggered.connect(dlg.show)
         logging.info('Settings dialog created')
 
@@ -619,8 +714,9 @@ if __name__ == "__main__":
 
         act_exit.triggered.connect(exit_app)
 
-        dlg.show()
-        logging.info('Settings dialog shown')
+        if "--startup" not in sys.argv:
+            dlg.show()
+            logging.info('Settings dialog shown')
 
         def restore_window(reason):
             if reason == QtWidgets.QSystemTrayIcon.ActivationReason.Trigger:

@@ -45,14 +45,26 @@ class _WheelSafeDoubleSpinBox(_WheelSafeSpinBoxMixin, QtWidgets.QDoubleSpinBox):
 class ModernSettingsDialog(QtWidgets.QDialog):
     """The main settings dialog for the application, redesigned."""
 
-    def __init__(self, settings, hook, update_tray_icon_callback, configure_startup):
+    def __init__(
+        self,
+        settings,
+        hook,
+        update_tray_icon_callback,
+        configure_startup,
+        startup_status_callback,
+    ):
         super().__init__()
         self.settings = settings
         self.hook = hook
         self.update_tray_icon_callback = update_tray_icon_callback
         self.configure_startup = configure_startup
+        self.startup_status_callback = startup_status_callback
         
         self._init_ui()
+
+    def showEvent(self, event):
+        self.start_cb.setChecked(self.startup_status_callback())
+        super().showEvent(event)
 
     def _init_ui(self):
         """Initializes the user interface."""
@@ -312,11 +324,31 @@ class ModernSettingsDialog(QtWidgets.QDialog):
             )
             return
 
+        startup_enabled = self.start_cb.isChecked()
+        actual_startup_enabled = self.startup_status_callback()
+        if startup_enabled != actual_startup_enabled:
+            if not configure_startup(startup_enabled):
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    translator.tr("msg_startup_failed_title"),
+                    translator.tr("msg_startup_failed_text"),
+                )
+                self.start_cb.setChecked(self.startup_status_callback())
+                return
+            actual_startup_enabled = self.startup_status_callback()
+            if startup_enabled != actual_startup_enabled:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    translator.tr("msg_startup_failed_title"),
+                    translator.tr("msg_startup_failed_text"),
+                )
+                self.start_cb.setChecked(actual_startup_enabled)
+                return
+
         self.settings.set_interval(self.interval_spin.value())
         bl = [self.bl_list.item(i).text() for i in range(self.bl_list.count())]
         self.settings.set_blacklist(bl)
-        self.settings.set_startup(self.start_cb.isChecked())
-        configure_startup(self.start_cb.isChecked())
+        self.settings.set_startup(actual_startup_enabled)
         self.settings.set_enabled(self.enabled_cb.isChecked())
         self.settings.set_direction_change_threshold(self.threshold_spin.value())
         self.settings.set_min_reversal_interval(self.reversal_spin.value())

@@ -27,6 +27,8 @@ TRANSLATIONS = {
         "btn_save": "儲存變更",
         "status_saved": "設定已成功儲存",
         "status_restored": "已成功還原為預設值",
+        "msg_startup_failed_title": "無法設定開機啟動",
+        "msg_startup_failed_text": "建立或移除高權限工作排程失敗, 請確認程式以系統管理員權限執行",
         "msg_reset_title": "確認重設",
         "msg_reset_text": "確定要還原預設設定嗎？",
         "msg_reset_yes": "是",
@@ -58,7 +60,7 @@ TRANSLATIONS = {
         <h2>系統</h2>
         <ul>
           <li><b>啟用捲動阻擋: </b>控制是否套用阻擋邏輯. 也可以從系統匣選單立即切換.</li>
-          <li><b>開機自動執行: </b>登入 Windows 時自動啟動本程式; 啟用此選項時也會啟動監看程序, 在主程式意外結束時嘗試重新啟動.</li>
+          <li><b>開機自動執行: </b>登入 Windows 時透過工作排程器啟動本程式, 並在系統匣背景執行.</li>
         </ul>
         <h2>儲存與其他選項</h2>
         <ul>
