@@ -59,7 +59,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.update_tray_icon_callback = update_tray_icon_callback
         self.configure_startup = configure_startup
         self.startup_status_callback = startup_status_callback
-        
+
         self._init_ui()
 
     def showEvent(self, event):
@@ -71,7 +71,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.setWindowFlag(QtCore.Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setWindowTitle('Scroll Lock Settings')
         self.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), "..", "bb-wheel-scroll-fixer.ico")))
-        
+
         # Load geometry or set default
         self.qt_settings = QtCore.QSettings("MetheTech", "WheelScrollFixer")
         if self.qt_settings.value("geometry"):
@@ -88,7 +88,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
             QToolTip { color: #ffffff; background-color: #333333; border: 1px solid #3d3d3d; }
             QGroupBox { border: 1px solid #3d3d3d; border-radius: 6px; margin-top: 24px; background-color: #252525; padding-top: 15px; }
             QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 5px; left: 10px; color: #F98E2C; font-weight: bold; }
-            
+
             /* Inputs */
             QSpinBox, QDoubleSpinBox { background-color: #333333; border: 1px solid #3d3d3d; border-radius: 4px; padding: 6px; color: #ffffff; font-size: 11pt; min-height: 20px; }
             /* Checkbox */
@@ -105,11 +105,11 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.content_layout = QtWidgets.QVBoxLayout(self.content_area)
         self.content_layout.setContentsMargins(24, 20, 24, 20)
         self.content_layout.setSpacing(14)
-        
+
         self.page_title = QtWidgets.QLabel("")
         self.page_title.setStyleSheet("font-size: 18pt; font-weight: bold; color: #ffffff;")
         self.content_layout.addWidget(self.page_title)
-        
+
         # Divider
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
@@ -135,7 +135,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
 
         # Footer
         self.footer_layout = QtWidgets.QHBoxLayout()
-        
+
         self.defaults_btn = QtWidgets.QPushButton("")
         self.defaults_btn.clicked.connect(self.restore_defaults)
         self.defaults_btn.setMinimumHeight(40)
@@ -147,7 +147,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.about_btn = QtWidgets.QPushButton("")
         self.about_btn.clicked.connect(lambda: AboutDialog(self).exec())
         self.about_btn.setMinimumHeight(40)
-        
+
         self.save_btn = QtWidgets.QPushButton("")
         self.save_btn.setObjectName("primary")
         self.save_btn.clicked.connect(lambda: self.save(self.configure_startup))
@@ -164,7 +164,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.footer_layout.addWidget(self.status_label)
         self.footer_layout.addSpacing(15)
         self.footer_layout.addWidget(self.save_btn)
-        
+
         self.content_layout.addLayout(self.footer_layout)
         self.main_layout.addWidget(self.content_area)
 
@@ -186,7 +186,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
                 f"QPushButton:hover {{ background-color: {hover_color}; }}"
                 f"QPushButton:pressed {{ background-color: {pressed_color}; }}"
             )
-        
+
         # Initial Translation
         self.retranslate_ui()
 
@@ -196,31 +196,31 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         form_logic = QtWidgets.QFormLayout()
         form_logic.setSpacing(15)
         form_logic.setContentsMargins(15, 25, 15, 15)
-        
+
         self.interval_spin = _WheelSafeDoubleSpinBox()
         self.interval_spin.setRange(0.05, 5.0)
         self.interval_spin.setSingleStep(0.01)
         self.interval_spin.setDecimals(2)
         self.interval_spin.setValue(self.settings.get_interval())
         self.interval_lbl = QtWidgets.QLabel("")
-        
+
         self.threshold_spin = _WheelSafeSpinBox()
         self.threshold_spin.setRange(1, 10)
         self.threshold_spin.setValue(self.settings.get_direction_change_threshold())
         self.threshold_lbl = QtWidgets.QLabel("")
-        
+
         self.reversal_spin = _WheelSafeDoubleSpinBox()
         self.reversal_spin.setRange(0.01, 0.20)
         self.reversal_spin.setSingleStep(0.01)
         self.reversal_spin.setDecimals(2)
         self.reversal_spin.setValue(self.settings.get_min_reversal_interval())
         self.reversal_lbl = QtWidgets.QLabel("")
-        
+
         form_logic.addRow(self.interval_lbl, self.interval_spin)
         form_logic.addRow(self.threshold_lbl, self.threshold_spin)
         form_logic.addRow(self.reversal_lbl, self.reversal_spin)
         grp_logic.setLayout(form_logic)
-        
+
         self.settings_layout.addWidget(grp_logic, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
         # Application Control Group
@@ -240,7 +240,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         )
         self.bl_list.addItems(self.settings.get_blacklist())
         self.bl_list.setFixedHeight(120)
-        
+
         bl_btns = QtWidgets.QHBoxLayout()
         self.btn_bl_add = QtWidgets.QPushButton("")
         self.btn_bl_add.clicked.connect(self.add_current_app_to_blacklist)
@@ -251,11 +251,11 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         bl_btns.addWidget(self.btn_bl_add)
         bl_btns.addWidget(self.btn_bl_rem)
         bl_btns.addWidget(self.btn_bl_clr)
-        
+
         layout_grp_app.addWidget(self.lbl_bl)
         layout_grp_app.addWidget(self.bl_list)
         layout_grp_app.addLayout(bl_btns)
-        
+
         grp_app.setLayout(layout_grp_app)
         self.settings_layout.addWidget(grp_app, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
@@ -264,17 +264,17 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         form_gen = QtWidgets.QVBoxLayout()
         form_gen.setContentsMargins(15, 25, 15, 15)
         form_gen.setSpacing(15)
-        
+
         self.enabled_cb = QtWidgets.QCheckBox('')
         self.enabled_cb.setChecked(self.settings.get_enabled())
-        
+
         self.start_cb = QtWidgets.QCheckBox("")
         self.start_cb.setChecked(self.settings.get_startup())
-        
+
         form_gen.addWidget(self.enabled_cb)
         form_gen.addWidget(self.start_cb)
         grp_sys.setLayout(form_gen)
-        
+
         self.settings_layout.addWidget(grp_sys, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
 
     def retranslate_ui(self):
@@ -290,7 +290,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.threshold_spin.setToolTip(tr("tip_threshold"))
         self.reversal_lbl.setText(tr("lbl_min_reversal"))
         self.reversal_spin.setToolTip(tr("tip_min_reversal"))
-        
+
         # Blacklist settings
         self.grp_app.setTitle(tr("grp_app_control"))
         self.lbl_bl.setText(tr("lbl_blacklist"))
@@ -304,7 +304,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.enabled_cb.setToolTip(tr("tip_enable"))
         self.start_cb.setText(tr("chk_start_boot"))
         self.start_cb.setToolTip(tr("tip_start_boot"))
-        
+
         # Footer
         self.defaults_btn.setText(tr("btn_defaults"))
         self.help_btn.setText(tr("btn_help"))

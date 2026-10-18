@@ -46,7 +46,7 @@ class JsonSettings:
 
         self.config_dir = os.path.join(base_path, "config")
         self.json_path = os.path.join(self.config_dir, f"{app_name}.json")
-        
+
         self.data = {}
         self._load_settings()
 
@@ -64,11 +64,11 @@ class JsonSettings:
         """Retrieves a value from the settings."""
         section, option = self._parse_key(key)
         val = self.data.get(section, {}).get(option, default)
-        
+
         # JSON usually preserves types, but we ensure basic consistency if requested
         if val is None:
             return default
-            
+
         if type == int:
             return int(val)
         elif type == float:
@@ -81,7 +81,7 @@ class JsonSettings:
             return val if isinstance(val, list) else []
         elif type == dict:
             return val if isinstance(val, dict) else {}
-            
+
         return val
 
     def set_value(self, key, value):
@@ -329,7 +329,7 @@ class MouseHook:
         self.hook_id = None
         self.hook_cb = None
         self.thread_id = None
-        
+
         # Caching for process name
         self.last_hwnd = None
         self.last_app_name = None
@@ -355,10 +355,10 @@ class MouseHook:
             'threshold': self.settings.get_direction_change_threshold(),
             'min_reversal': self.settings.get_min_reversal_interval(),
         }
-        
+
         # Atomic assignment in Python (GIL ensures this is safe for single ref swap)
         self.config_snapshot = new_config
-        
+
         self._consecutive_opposite_events = 0
         logging.info(
             "Hook settings applied: enabled=%s, interval=%.2fs, threshold=%d, min_reversal=%.2fs",
@@ -367,7 +367,7 @@ class MouseHook:
             new_config['threshold'],
             new_config['min_reversal'],
         )
-        
+
         if update_tray_icon_callback:
             update_tray_icon_callback()
 
@@ -391,10 +391,10 @@ class MouseHook:
 
     def start(self):
         self.thread_id = self.kernel32.GetCurrentThreadId()
-        
+
         # Define LRESULT for 64-bit compatibility
         LRESULT = ctypes.c_longlong if ctypes.sizeof(ctypes.c_void_p) == 8 else ctypes.c_long
-        
+
         CMPFUNC = ctypes.WINFUNCTYPE(
             LRESULT, ctypes.c_int, wintypes.WPARAM, wintypes.LPARAM
         )
@@ -421,9 +421,9 @@ class MouseHook:
 
                     current_block_interval = cfg['interval']
                     current_direction_change_threshold = cfg['threshold']
-                    
+
                     time_diff = now - self.last_time
-                    
+
                     if logging.getLogger().isEnabledFor(logging.DEBUG):
                         logging.debug(f"HOOK: Delta={delta_short}, Dir={current_dir}, LastDir={self.last_dir}, TimeDiff={time_diff:.4f}")
 
@@ -455,7 +455,7 @@ class MouseHook:
                         return self.user32.CallNextHookEx(self.hook_id, nCode, wParam, lParam)
                     else:
                         self._consecutive_opposite_events += 1
-                        
+
                         if logging.getLogger().isEnabledFor(logging.DEBUG):
                             logging.debug(f"HOOK: CHECK (Opposite Dir) dt={time_diff:.4f}s | Count={self._consecutive_opposite_events}/{current_direction_change_threshold}")
 
@@ -478,7 +478,7 @@ class MouseHook:
             return self.user32.CallNextHookEx(self.hook_id, nCode, wParam, lParam)
 
         self.hook_cb = CMPFUNC(hook_proc)
-        
+
         # Set return type for CallNextHookEx to match LRESULT
         self.user32.CallNextHookEx.restype = LRESULT
         self.user32.CallNextHookEx.argtypes = [ctypes.c_void_p, ctypes.c_int, wintypes.WPARAM, wintypes.LPARAM]
@@ -491,7 +491,7 @@ class MouseHook:
             0, 
             0,
         )
-        
+
         if not self.hook_id:
             error_code = self.kernel32.GetLastError()
             logging.error(f"CRITICAL ERROR: Failed to install mouse hook. Error Code: {error_code}")
@@ -545,7 +545,7 @@ if __name__ == "__main__":
             # Prepare arguments
             script = os.path.abspath(__file__)
             params = ' '.join([f'"{arg}"' for arg in sys.argv[1:]])
-            
+
             if getattr(sys, 'frozen', False):
                 executable = sys.executable
                 arguments = params
@@ -561,7 +561,7 @@ if __name__ == "__main__":
 
     admin_process = is_admin()
     legacy_startup_entry_removed = remove_legacy_startup() if admin_process else False
-    
+
     if len(sys.argv) > 2 and sys.argv[1] == "--watchdog":
         run_watchdog(sys.argv[2])
     else:
@@ -578,7 +578,7 @@ if __name__ == "__main__":
         logging.info(f"Logging initialized. Log file: {log_file}")
         if legacy_startup_entry_removed is None:
             logging.error("The legacy startup entry could not be removed.")
-        
+
         app_name = "WheelScrollFixer"
         window_title = translator.tr("window_title")
         single_instance = SingleInstance(app_name, window_title)
@@ -588,7 +588,7 @@ if __name__ == "__main__":
         logging.info('Creating QApplication')
         app = QtWidgets.QApplication(sys.argv)
         app.setQuitOnLastWindowClosed(False)
-        
+
         settings = Settings()
         logging.info('Settings loaded')
         if settings.get_startup() and not startup_task_exists():
