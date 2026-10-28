@@ -1,6 +1,3 @@
-# localization.py
-# -*- coding: utf-8 -*-
-
 TRANSLATIONS = {
     "zh_TW": {
         "window_title": "BB 捲動彈跳過濾",
@@ -17,6 +14,8 @@ TRANSLATIONS = {
         "tip_threshold": "確認為新方向所需的反向連續捲動次數; 只計算最短反轉時間之後, 阻擋間隔到期之前的事件",
         "lbl_min_reversal": "最短反轉時間(s) :",
         "tip_min_reversal": "物理檢查: 比此時間更快的反轉會立即被阻擋",
+        "lbl_min_same_direction": "同向最短間隔(s) :",
+        "tip_min_same_direction": "與最近一次通過事件同向, 且間隔小於此值時會被阻擋; 設為 0 可停用",
         "lbl_blacklist": "黑名單(不套用阻擋) :",
         "btn_add_current": "新增目前應用程式",
         "btn_remove_selected": "移除選取項目",
@@ -44,12 +43,13 @@ TRANSLATIONS = {
         "help_window_title": "BB 捲動彈跳過濾 - 說明",
         "help_content": """
         <h1>BB 捲動彈跳過濾 - 說明</h1>
-        <p>本程式會過濾短時間內快速反轉方向的滑鼠滾輪事件, 以減少意外捲動. 設定視窗分為"阻擋邏輯", "應用程式控制"及"系統"三個區塊.</p>
+        <p>本程式會過濾滑鼠滾輪的捲動抖動, 以減少意外捲動. 設定視窗分為"阻擋邏輯", "應用程式控制"及"系統"三個區塊.</p>
         <h2>阻擋邏輯</h2>
         <ul>
           <li><b>阻擋間隔(s): </b>在最近一次通過的滾輪事件後, 於此時間範圍內檢查方向反轉. 超過此間隔後, 程式會重新判斷捲動方向. 若使用大於 1 的方向切換門檻, 此值必須大於最短反轉時間.</li>
           <li><b>方向切換門檻: </b>最短反轉時間之後, 阻擋間隔到期之前, 反方向的連續滾輪事件需達到此次數, 才會被視為有意切換方向並通過; 未達門檻的反向事件會被阻擋.</li>
           <li><b>最短反轉時間(s): </b>若方向反轉發生得比此時間更快, 該事件會立即被阻擋.</li>
+          <li><b>同向最短間隔(s): </b>與最近一次通過的滾輪事件同向, 且間隔小於此值, 該事件會立即被阻擋. 被阻擋的事件不會重新計時; 設為 0 可停用.</li>
         </ul>
         <h2>應用程式控制</h2>
         <ul>
@@ -79,7 +79,7 @@ TRANSLATIONS = {
         """,
         "btn_close": "關閉",
         "about_qlabel": "<b>BB 捲動彈跳過濾</b>",
-        "about_window_title": "關於 BB 捲動彈跳過濾 - 關於",
+        "about_window_title": "BB 捲動彈跳過濾 - 關於",
         "about_version": "版本: 1.3.0",
         "about_author": "作者: BeefBB",
         "about_description": "MeteAvci/WheelScrollFixer 的BB修改版本",

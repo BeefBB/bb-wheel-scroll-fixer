@@ -216,9 +216,17 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.reversal_spin.setValue(self.settings.get_min_reversal_interval())
         self.reversal_lbl = QtWidgets.QLabel("")
 
+        self.same_direction_spin = _WheelSafeDoubleSpinBox()
+        self.same_direction_spin.setRange(0.0, 0.20)
+        self.same_direction_spin.setSingleStep(0.01)
+        self.same_direction_spin.setDecimals(2)
+        self.same_direction_spin.setValue(self.settings.get_min_same_direction_interval())
+        self.same_direction_lbl = QtWidgets.QLabel("")
+
         form_logic.addRow(self.interval_lbl, self.interval_spin)
         form_logic.addRow(self.threshold_lbl, self.threshold_spin)
         form_logic.addRow(self.reversal_lbl, self.reversal_spin)
+        form_logic.addRow(self.same_direction_lbl, self.same_direction_spin)
         grp_logic.setLayout(form_logic)
 
         self.settings_layout.addWidget(grp_logic, alignment=QtCore.Qt.AlignmentFlag.AlignTop)
@@ -290,6 +298,8 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.threshold_spin.setToolTip(tr("tip_threshold"))
         self.reversal_lbl.setText(tr("lbl_min_reversal"))
         self.reversal_spin.setToolTip(tr("tip_min_reversal"))
+        self.same_direction_lbl.setText(tr("lbl_min_same_direction"))
+        self.same_direction_spin.setToolTip(tr("tip_min_same_direction"))
 
         # Blacklist settings
         self.grp_app.setTitle(tr("grp_app_control"))
@@ -352,6 +362,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
         self.settings.set_enabled(self.enabled_cb.isChecked())
         self.settings.set_direction_change_threshold(self.threshold_spin.value())
         self.settings.set_min_reversal_interval(self.reversal_spin.value())
+        self.settings.set_min_same_direction_interval(self.same_direction_spin.value())
         self.settings.sync()
         self.hook.reload_settings(self.update_tray_icon_callback)
         self.status_label.setText(translator.tr("status_saved"))
@@ -376,6 +387,7 @@ class ModernSettingsDialog(QtWidgets.QDialog):
             self.interval_spin.setValue(0.20)
             self.threshold_spin.setValue(1)
             self.reversal_spin.setValue(0.05)
+            self.same_direction_spin.setValue(0.02)
             self.enabled_cb.setChecked(True)
             self.resize(700, 900)
             self.save_btn.click()

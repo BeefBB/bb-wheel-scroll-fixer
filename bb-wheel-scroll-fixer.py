@@ -210,6 +210,12 @@ class Settings(JsonSettings):
     def set_min_reversal_interval(self, v: float):
         self.set_value("min_reversal_interval", v)
 
+    def get_min_same_direction_interval(self) -> float:
+        return self.value("min_same_direction_interval", 0.02, type=float)
+
+    def set_min_same_direction_interval(self, v: float):
+        self.set_value("min_same_direction_interval", v)
+
 # ===========================
 # Windows Startup Management
 # ===========================
@@ -354,6 +360,7 @@ class MouseHook:
             'enabled': self.settings.get_enabled(),
             'threshold': self.settings.get_direction_change_threshold(),
             'min_reversal': self.settings.get_min_reversal_interval(),
+            'min_same_direction': self.settings.get_min_same_direction_interval(),
         }
 
         # Atomic assignment in Python (GIL ensures this is safe for single ref swap)
@@ -361,11 +368,12 @@ class MouseHook:
 
         self._consecutive_opposite_events = 0
         logging.info(
-            "Hook settings applied: enabled=%s, interval=%.2fs, threshold=%d, min_reversal=%.2fs",
+            "Hook settings applied: enabled=%s, interval=%.2fs, threshold=%d, min_reversal=%.2fs, min_same_direction=%.2fs",
             new_config['enabled'],
             new_config['interval'],
             new_config['threshold'],
             new_config['min_reversal'],
+            new_config['min_same_direction'],
         )
 
         if update_tray_icon_callback:
@@ -408,7 +416,7 @@ class MouseHook:
                     ms = ctypes.cast(lParam, ctypes.POINTER(MSLLHOOKSTRUCT)).contents
                     delta_short = ctypes.c_short((ms.mouseData >> 16) & 0xFFFF).value
                     current_dir = 1 if delta_short > 0 else -1
-                    now = time.time()
+                    now = time.monotonic()
 
                     if not cfg['enabled']:
                         return self.user32.CallNextHookEx(self.hook_id, nCode, wParam, lParam)
@@ -426,6 +434,17 @@ class MouseHook:
 
                     if logging.getLogger().isEnabledFor(logging.DEBUG):
                         logging.debug(f"HOOK: Delta={delta_short}, Dir={current_dir}, LastDir={self.last_dir}, TimeDiff={time_diff:.4f}")
+
+                    # Block same-direction repeats without extending the interval
+                    if (
+                        self.last_dir is not None
+                        and current_dir == self.last_dir
+                        and time_diff < cfg['min_same_direction']
+                    ):
+                        self._consecutive_opposite_events = 0
+                        if logging.getLogger().isEnabledFor(logging.DEBUG):
+                            logging.debug(f"HOOK: SAME DIRECTION BLOCK ({time_diff:.4f}s < {cfg['min_same_direction']}s)")
+                        return 1
 
                     # --- PHYSICS CHECK (The "Impossible Speed" Filter) ---
                     if (self.last_dir is not None) and (current_dir != self.last_dir) and (time_diff < cfg['min_reversal']):
